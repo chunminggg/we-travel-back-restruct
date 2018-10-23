@@ -11,6 +11,7 @@ export default {
   update: '上传数据',
   join_page: 'QQ群',
   doc: '文档',
+  edit_product:'产品编辑',
   update_table_page: '上传CSV文件',
   update_paste_page: '粘贴表格数据',
   multilevel: '多级菜单',

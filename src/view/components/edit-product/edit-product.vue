@@ -78,7 +78,7 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 
 import { quillEditor } from "vue-quill-editor";
-import { createNewProduct } from "@/libs/service";
+import { saveEditProduct,getProductDetail } from "@/libs/service";
 export default {
   components: {
     imageUpload,
@@ -93,7 +93,7 @@ export default {
         { content: "", placeHolder: "费用说明" },
         { content: "", placeHolder: "预订须知" }
       ],
-
+     id:'',
       productId: "",
       //产品编号
       productNumber: "",
@@ -174,54 +174,37 @@ export default {
     };
   },
   created() {
-    var _self = this;
-    _self.productId = this.$route.params.productId;
-    network.getThemelist().then(data => {
-      if (data.length) {
-        _self.productTypes = [];
-        data.forEach(obj => {
-          _self.productTypes.push({
-            label: obj.attributes.name,
-            value: obj.attributes.type
-          });
-        });
-      }
-    });
-    network.getTodoDetail(
-      _self.productId,
-      "Product",
-      data => {
-        _self.richItems = data.detailContent;
-        _self.productNumber = data.onleyId;
-        _self.productPlace = data.place;
-        _self.productDes = data.describe;
-        _self.productName = data.name;
-        _self.productPrice = data.price;
-        _self.imageArray = data.imageArray;
-        _self.fileArray = data.fileArray;
-        if (data.fileArray == undefined) {
-          _self.fileArray = [];
-        }
-        _self.productStartDate = data.startDate;
-        _self.isFollowTeam = data.isFollowTeam || false;
-        _self.isFreeTravel = data.isFreeTravel || false;
-        _self.tagArray = data.tagArray || [];
-        if (data.isRecommend != undefined) {
-          _self.isRecommend = data.isRecommend;
-        }
-        if (data.isSpecialPrice != undefined) {
-          _self.isSpecialPrice = data.isSpecialPrice;
-        }
-
-        // _self.productEndDate = data.endDate
-        _self.productTypeSelected = data.type;
-      },
-      error => {
-        _self.$Message.error("获取信息失败,请重试");
-      }
-    );
+    this.productId = this.$route.params.id;
+    this.getData(this.productId)
   },
   methods: {
+      async getData(productId){
+        let info = await getProductDetail(productId)
+        this.id = info.id
+        let data = info.attributes
+        this.richItems = data.detailContent;
+        this.productNumber = data.onleyId;
+        this.productPlace = data.place;
+        this.productDes = data.describe;
+        this.productName = data.name;
+        this.productPrice = data.price;
+        this.imageArray = data.imageArray;
+        this.fileArray = data.fileArray;
+        if (data.fileArray == undefined) {
+          this.fileArray = [];
+        }
+        this.productStartDate = data.startDate;
+        this.isFollowTeam = data.isFollowTeam || false;
+        this.isFreeTravel = data.isFreeTravel || false;
+        this.tagArray = data.tagArray || [];
+        if (data.isRecommend != undefined) {
+          this.isRecommend = data.isRecommend;
+        }
+        if (data.isSpecialPrice != undefined) {
+          this.isSpecialPrice = data.isSpecialPrice;
+        }
+        this.productTypeSelected = data.type;
+      },
     handleClose(index) {
       this.tagArray.splice(index, 1);
     },
@@ -265,7 +248,8 @@ export default {
         isSpecialPrice: _self.isSpecialPrice,
         isFollowTeam: _self.isFollowTeam,
         isFreeTravel: _self.isFreeTravel,
-        tagArray: _self.tagArray
+        tagArray: _self.tagArray,
+        id:_self.id,
       };
       return dict;
     },
@@ -285,13 +269,14 @@ export default {
         if (!this.imageArray.length) {
           this.$Message.error("请上传图片至少一张");
         }
-        let data = await createNewProduct(dict);
-        this.$Message.success("新建成功");
+        let data = await saveEditProduct(dict);
+        debugger
+        this.$Message.success("保存成功");
         this.$nextTick(()=>{
           this.$router.go(0)
         })
       } catch (error) {
-        this.$Message.warnging("操作失败");
+        this.$Message.warning("操作失败");
       }
     }
   }

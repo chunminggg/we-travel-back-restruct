@@ -13,3 +13,69 @@ export const uploadFile = (file) => {
     dataFile = new AV.File(name, file);
   return dataFile.save()
 }
+
+export const createNewProduct = (data) => {
+  var Product = AV.Object.extend('Product');
+  var product = new Product();
+  product.set('startDate', data.startDate);
+  product.set('name', data.name);
+  product.set('describe', data.describe);
+  product.set('type', data.type);
+  product.set('place', data.place);
+  product.set('onleyId', data.onleyId);
+  product.set('price', data.price);
+  product.set('imageArray', data.imageArray);
+  product.set('detailContent', data.detailContent);
+  product.set('isRecommend', data.isRecommend)
+  product.set('isSpecialPrice', data.isSpecialPrice)
+  product.set('isFreeTravel', data.isFreeTravel)
+  product.set('isFollowTeam', data.isFollowTeam)
+  product.set('tagArray', data.tagArray)
+  product.set('dayItems', data.dayItems)
+  product.set('calendarEvents', data.calendarEvents)
+  product.set('isNewProduct', data.isNewProduct)
+  product.set('fileArray', data.fileArray)
+  return product.save()
+
+}
+export const getProductList = (params) => {
+  var query = new AV.Query('Product');
+  query.select(['place', 'name', 'startDate', 'type', 'endDate', 'onleyId', 'price', 'describe', 'imageArray', 'countNumber']);
+  query.addDescending('countNumber')
+  query.select(['isSort', 'isFreeTravel', 'isRecommend', 'isFollowTeam', 'isSpecialPrice', 'place', 'name', 'startDate', 'type', 'endDate', 'onleyId', 'price', 'describe', 'imageArray', 'countNumber']);
+  query.addDescending('countNumber');
+  query.addDescending('updatedAt')
+  return query.find()
+}
+export const deleteProduct = (productId) => {
+  var todo = AV.Object.createWithoutData('Product', productId);
+  return todo.destroy()
+}
+export const getProductDetail = (productId) => {
+
+  var query = new AV.Query('Product');
+  return query.get(productId)
+}
+export const saveEditProduct = (data) =>{
+  let Product = AV.Object.extend('Product');
+  let product = AV.Object.createWithoutData('Product', data.id);
+  product.set('startDate', data.startDate);
+  product.set('name', data.name);
+  product.set('describe', data.describe);
+  product.set('type', data.type);
+  product.set('place', data.place);
+  product.set('onleyId', data.onleyId);
+  product.set('price', data.price);
+  product.set('imageArray', data.imageArray);
+  product.set('detailContent', data.detailContent);
+  product.set('isRecommend', data.isRecommend)
+  product.set('isSpecialPrice', data.isSpecialPrice)
+  product.set('isFreeTravel', data.isFreeTravel)
+  product.set('isFollowTeam', data.isFollowTeam)
+  product.set('tagArray', data.tagArray)
+  product.set('dayItems', data.dayItems)
+  product.set('calendarEvents', data.calendarEvents)
+  product.set('isNewProduct', data.isNewProduct)
+  product.set('fileArray', data.fileArray)
+  return product.save()
+}

@@ -68,9 +68,21 @@ export default [
         name: 'drag_list_page',
         meta: {
           icon: 'ios-infinite',
-          title: '拖拽列表'
+          title: '产品列表'
         },
         component: () => import('@/view/components/drag-list/drag-list.vue')
+      },
+      {
+        path: 'edit_product/:id',
+        name: 'edit_product',
+        meta: {
+          icon: 'ios-infinite',
+          title: '产品编辑',
+          hideInMenu:true,
+          hide:true,
+        },
+
+        component: () => import('@/view/components/edit-product/edit-product.vue')
       },
       
     ]
