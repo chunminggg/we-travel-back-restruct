@@ -59,7 +59,7 @@ export default [
         name: 'count_to_page',
         meta: {
           icon: 'md-trending-up',
-          title: '数字渐变'
+          title: '产品发布'
         },
         component: () => import('@/view/components/count-to/count-to.vue')
       },

@@ -1,18 +1,15 @@
 <template>
-  <div class="count-to-wrapper">
-
+  <div>
+    
   </div>
 </template>
 
 <script>
 export default {
-  name: "CountTo",
-  props: {},
-  data() {
-    return {};
-  },
-  computed: {},
-  methods: {},
-  mounted() {}
-};
+
+}
 </script>
+
+<style>
+
+</style>
