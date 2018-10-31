@@ -5,6 +5,25 @@ AV.init({
   appId: APP_ID,
   appKey: APP_KEY
 });
+export const addTheme = (name) => {
+  const Product =  AV.Object.extend('Type')
+  let product = new Product()
+  product.set('name',name)
+  return product.save()
+}
+export const getTheme = () => {
+  let theme = new AV.Query('Type')
+  return theme.find()
+}
+export const deleteTheme = (id) => {
+    let item = AV.Object.createWithoutData('Type',id)
+    return item.destroy()
+}
+export const editTheme = (name,id) => {
+  let item = AV.Object.createWithoutData('Type',id)
+  item.set('name',name)
+  return item.save()
+}
 export const userLogin = (userName, password) => {
   return AV.User.logInWithMobilePhone(userName, password)
 }

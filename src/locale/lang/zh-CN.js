@@ -1,6 +1,7 @@
 export default {
   home: '首页',
   components: '产品管理',
+  theme:'主题管理',
   count_to_page: '产品发布',
   tables_page: '多功能表格',
   split_pane_page: '分割窗口',

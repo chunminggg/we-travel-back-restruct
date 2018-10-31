@@ -81,10 +81,18 @@ export default [
           hideInMenu:true,
           hide:true,
         },
-
         component: () => import('@/view/components/edit-product/edit-product.vue')
       },
-      
+      {
+        path: 'theme',
+        name: 'theme',
+        meta: {
+          icon: 'ios-infinite',
+          title: '主题管理',
+
+        },
+        component: () => import('@/view/theme/index.vue')
+      },
     ]
   },
   {
