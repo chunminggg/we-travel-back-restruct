@@ -19,8 +19,31 @@ export const deleteTheme = (id) => {
     let item = AV.Object.createWithoutData('Type',id)
     return item.destroy()
 }
-export const editTheme = (name,id) => {
+export const editTheme = (name,id,targetId) => {
   let item = AV.Object.createWithoutData('Type',id)
+  item.set('name',name)
+  let targetTheme = AV.Object.createWithoutData('Type',targetId)
+  item.set('targetType',targetTheme)
+  return item.save()
+}
+export const addDestination = (name,id) => {
+  const Product =  AV.Object.extend('Destination')
+  let product = new Product()
+  product.set('name',name)
+  let targetTheme = AV.Object.createWithoutData('Type',id)
+  product.set('targetType',targetTheme)
+  return product.save()
+}
+export const getDestination = () => {
+  let theme = new AV.Query('Destination')
+  return theme.find()
+}
+export const deleteDestination = (id) => {
+    let item = AV.Object.createWithoutData('Destination',id)
+    return item.destroy()
+}
+export const editDestination = (name,id) => {
+  let item = AV.Object.createWithoutData('Destination',id)
   item.set('name',name)
   return item.save()
 }

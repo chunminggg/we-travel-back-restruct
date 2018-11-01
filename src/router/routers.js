@@ -93,6 +93,16 @@ export default [
         },
         component: () => import('@/view/theme/index.vue')
       },
+      {
+        path: 'destination',
+        name: 'destination',
+        meta: {
+          icon: 'ios-infinite',
+          title: '目的地管理',
+
+        },
+        component: () => import('@/view/destination/index.vue')
+      },
     ]
   },
   {
