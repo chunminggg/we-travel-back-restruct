@@ -35,19 +35,38 @@
     </Input>
     <div class="product">
       <Button type="info" class="product" @click="priceSelect">价格添加</Button>
-      <div class="priceTag">
-        <Tag class="tagView" v-for="(item,index) in tagArray" :key="index" closable @on-close="handleClose(index)">{{item.date}} ￥{{item.price}}</Tag>
+       <div class="price-card">
+        <Row :gutter="16">
+          <Col span="6" v-for="(item,index) in tagArray" :key="index">
+          <Card>
+              <a href="#" slot="extra" @click.prevent="handClose(index)">
+            <Icon type="ios-loop-strong"></Icon>
+            删除
+        </a>
+            <div>
+            成人票价:{{item.price}}
+          </div>
+          <div>
+            儿童票价:{{item.childPrice}}
+          </div>
+          <div>
+            <div>开始日期：{{item.startDate}}</div><div>结束日期：{{item.endDate}}</div>
+          </div>
+            </Card>
+          
+          </Col>
+          </Row>
       </div>
     </div>
     <div class="product">
       <label>是否特价:</label>
       <i-switch v-model="isRecommend"></i-switch>
-      <label>是否推荐:</label>
+      <!-- <label>是否推荐:</label>
       <i-switch v-model="isSpecialPrice"></i-switch>
       <label>是否跟团游</label>
       <i-switch v-model="isFollowTeam"></i-switch>
       <label>是否自由行</label>
-      <i-switch v-model="isFreeTravel"></i-switch>
+      <i-switch v-model="isFreeTravel"></i-switch> -->
     </div>
     <Select v-model="productTypeSelected" class="product" placeholder="请选择产品类型">
       <Option v-for="(item,index) in productTypes" :value="item.value" :key="index">{{ item.label }}</Option>
@@ -60,11 +79,11 @@
       <quill-editor v-model="richItem.content"></quill-editor>
     </div>
     <Button type="success" long @click="submitData" class="product">确认提交</Button>
-    <!-- <Button type="error" long @click="elseSubmitData" class="product">另存为</Button> -->
+    <Button type="error" long @click="elseSubmitData" class="product">另存为</Button>
 
     <Modal v-model="priceModal" title="价格添加" @on-ok="priceAdd">
       <Input v-model="singlePrice" placeholder="请输入价格" style="width: 300px"></Input>
-      <DatePicker v-model="singleDate" type="date" placeholder="选择日期" style="width: 300px" class="product"></DatePicker>
+      <DatePicker v-model="singleDate" type="daterange" placeholder="选择日期" style="width: 300px" class="product"></DatePicker>
     </Modal>
   </div>
 </template>
@@ -79,6 +98,7 @@ import "quill/dist/quill.bubble.css";
 
 import { quillEditor } from "vue-quill-editor";
 import { saveEditProduct,getProductDetail } from "@/libs/service";
+import moment from 'moment'
 export default {
   components: {
     imageUpload,
@@ -210,9 +230,11 @@ export default {
     },
     // 价格添加
     priceAdd() {
-      let dict = {
-        date: this.singleDate.toLocaleDateString(),
-        price: this.singlePrice
+     let dict = {
+        startDate: moment(this.singleDate[0]).format("YYYY-MM-DD"),
+        endDate: moment(this.singleDate[0]).format("YYYY-MM-DD"),
+        price: this.singlePrice,
+        childPrice: this.singleChildPrice
       };
 
       this.tagArray.push(dict);
