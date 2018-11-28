@@ -61,12 +61,6 @@
     <div class="product">
       <label>是否置顶:</label>
       <i-switch v-model="isRecommend"></i-switch>
-      <!-- <label>是否推荐:</label>
-      <i-switch v-model="isSpecialPrice"></i-switch>
-      <label>是否跟团游</label>
-      <i-switch v-model="isFollowTeam"></i-switch>
-      <label>是否自由行</label>
-      <i-switch v-model="isFreeTravel"></i-switch> -->
     </div>
     <Select v-model="productTypeSelected" class="product" placeholder="请选择产品类型">
       <Option v-for="(item,index) in productTypes" :value="item.value" :key="index">{{ item.label }}</Option>
@@ -76,7 +70,8 @@
     </image-upload>
     <div v-for="(richItem, index) in richItems" :key="index" class="myProduct">
       <Alert>{{richItem.placeHolder}}</Alert>
-      <quill-editor v-model="richItem.content"></quill-editor>
+      <!-- <quill-editor v-model="richItem.content"></quill-editor> -->
+      <rich-editor :ref="'rich'+index" :idx="index"></rich-editor>
     </div>
     <Button type="success" long @click="submitData" class="product">确认提交</Button>
     <Button type="error" long @click="elseSubmitData" class="product">另存为</Button>
@@ -99,12 +94,14 @@ import "quill/dist/quill.bubble.css";
 
 import { quillEditor } from "vue-quill-editor";
 import { createNewProduct, getTheme, getDestination } from "@/libs/service";
+import richEditor from '@/components/productEditor/editor'
 import moment from "moment";
 export default {
   components: {
     imageUpload,
     Editor,
-    quillEditor
+    quillEditor,
+    richEditor
   },
   data() {
     return {
@@ -227,6 +224,7 @@ export default {
 
         // _self.productEndDate = data.endDate
         _self.productTypeSelected = data.type;
+        this.configRichConent()
       },
       error => {
         _self.$Message.error("获取信息失败,请重试");
@@ -234,6 +232,11 @@ export default {
     );
   },
   methods: {
+    configRichConent(){
+      this.richItems.map((item,index)=>{
+        this.$refs[`rich${index}`][0].htmlText = item.content
+      })
+    },
     // 获取主题数据
     async getThemeData() {
       let data = await getTheme();
@@ -270,8 +273,15 @@ export default {
     getFileArray(data) {
       this.fileArray = data;
     },
+    getRichContent(){
+      this.richItems.map((item,index)=>{
+        let editorContent = this.$refs[`rich${index}`][0].htmlText
+        item.content = editorContent
+      })
+    },
     getNowData() {
       var _self = this;
+      this.getRichContent()
       var dict = {
         startDate: _self.productStartDate,
         // endDate: _self.productEndDate,
@@ -290,6 +300,7 @@ export default {
         isFreeTravel: _self.isFreeTravel,
         tagArray: _self.tagArray
       };
+      debugger
       return dict;
     },
     // 另存为

@@ -76,7 +76,8 @@
     </image-upload>
     <div v-for="(richItem, index) in richItems" :key="index" class="myProduct">
       <Alert>{{richItem.placeHolder}}</Alert>
-      <quill-editor v-model="richItem.content"></quill-editor>
+       <!-- <quill-editor v-model="richItem.content"></quill-editor> -->
+      <rich-editor :ref="'rich'+index" :idx="index"></rich-editor>
     </div>
     <Button type="success" long @click="submitData" class="product">确认提交</Button>
     <Button type="error" long @click="elseSubmitData" class="product">另存为</Button>
@@ -99,11 +100,13 @@ import "quill/dist/quill.bubble.css";
 import { quillEditor } from "vue-quill-editor";
 import { saveEditProduct,getProductDetail } from "@/libs/service";
 import moment from 'moment'
+import richEditor from '@/components/productEditor/editor'
 export default {
   components: {
     imageUpload,
     Editor,
-    quillEditor
+    quillEditor,
+    richEditor
   },
   data() {
     return {
@@ -224,7 +227,19 @@ export default {
           this.isSpecialPrice = data.isSpecialPrice;
         }
         this.productTypeSelected = data.type;
+        this.configRichConent()
       },
+      configRichConent(){
+      this.richItems.map((item,index)=>{
+        this.$refs[`rich${index}`][0].htmlText = item.content
+      })
+    },
+     getRichContent(){
+      this.richItems.map((item,index)=>{
+        let editorContent = this.$refs[`rich${index}`][0].htmlText
+        item.content = editorContent
+      })
+    },
     handleClose(index) {
       this.tagArray.splice(index, 1);
     },
@@ -254,6 +269,7 @@ export default {
     },
     getNowData() {
       var _self = this;
+       this.getRichContent()
       var dict = {
         startDate: _self.productStartDate,
         // endDate: _self.productEndDate,
@@ -292,7 +308,6 @@ export default {
           this.$Message.error("请上传图片至少一张");
         }
         let data = await saveEditProduct(dict);
-        debugger
         this.$Message.success("保存成功");
         this.$nextTick(()=>{
           this.$router.go(0)
