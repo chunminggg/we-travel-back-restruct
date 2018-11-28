@@ -1,5 +1,5 @@
 <style lang="less">
-@import "./login.less";
+@import './login.less';
 </style>
 
 <template>
@@ -29,13 +29,16 @@ export default {
       try {
         let data = await userLogin(userName, password);
         localStorage.setItem("userName", data.mobilePhoneNumber);
-        this.handleLogin({ userName, password }).then(res => {
-          this.getUserInfo().then(res => {
-            this.$router.push({
-              name: this.$config.homeName
-            });
-          });
+        this.$router.push({
+          name: this.$config.homeName
         });
+        // this.handleLogin({ userName, password }).then(res => {
+        //   this.getUserInfo().then(res => {
+        //     this.$router.push({
+        //       name: this.$config.homeName
+        //     });
+        //   });
+        // });
       } catch (error) {
         this.$Message.error("登陆失败");
       }

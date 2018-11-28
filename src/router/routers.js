@@ -12,8 +12,7 @@ import parentView from '@/components/parent-view'
  * }
  */
 
-export default [
-  {
+export default [{
     path: '/login',
     name: 'login',
     meta: {
@@ -31,19 +30,17 @@ export default [
       hideInMenu: true,
       notCache: true
     },
-    children: [
-      {
-        path: '/home',
-        name: 'home',
-        meta: {
-          hideInMenu: true,
-          title: '首页',
-          notCache: true,
-          icon: 'md-home'
-        },
-        component: () => import('@/view/single-page/home')
-      }
-    ]
+    children: [{
+      path: '/home',
+      name: 'home',
+      meta: {
+        hideInMenu: true,
+        title: '首页',
+        notCache: true,
+        icon: 'md-home'
+      },
+      component: () => import('@/view/single-page/home')
+    }]
   },
   {
     path: '/components',
@@ -53,8 +50,7 @@ export default [
       title: '产品管理'
     },
     component: Main,
-    children: [
-      {
+    children: [{
         path: 'count_to_page',
         name: 'count_to_page',
         meta: {
@@ -78,8 +74,8 @@ export default [
         meta: {
           icon: 'ios-infinite',
           title: '产品编辑',
-          hideInMenu:true,
-          hide:true,
+          hideInMenu: true,
+          hide: true,
         },
         component: () => import('@/view/components/edit-product/edit-product.vue')
       },
@@ -99,9 +95,17 @@ export default [
         meta: {
           icon: 'ios-infinite',
           title: '目的地管理',
-
         },
         component: () => import('@/view/destination/index.vue')
+      },
+      {
+        path: 'orderManage',
+        name: 'orderManage',
+        meta: {
+          icon: 'ios-infinite',
+          title: '订单管理',
+        },
+        component: () => import('@/view/orderManage/index.vue')
       },
     ]
   },
@@ -113,17 +117,15 @@ export default [
       hideInMenu: true
     },
     component: Main,
-    children: [
-      {
-        path: 'error_logger_page',
-        name: 'error_logger_page',
-        meta: {
-          icon: 'ios-bug',
-          title: '错误收集'
-        },
-        component: () => import('@/view/single-page/error-logger.vue')
-      }
-    ]
+    children: [{
+      path: 'error_logger_page',
+      name: 'error_logger_page',
+      meta: {
+        icon: 'ios-bug',
+        title: '错误收集'
+      },
+      component: () => import('@/view/single-page/error-logger.vue')
+    }]
   },
   {
     path: '/argu',
@@ -132,8 +134,7 @@ export default [
       hideInMenu: true
     },
     component: Main,
-    children: [
-      {
+    children: [{
         path: 'params/:id',
         name: 'params',
         meta: {
