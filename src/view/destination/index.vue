@@ -48,7 +48,6 @@ export default {
         {
           title: "名称",
           render:(h, params)=> {
-            debugger
             return <span>{params.row.attributes.name}</span>;
           }
         },
@@ -129,7 +128,7 @@ export default {
     },
     async getData() {
       let data = await getDestination();
-      this.data = data.result;
+      this.data = data;
     },
     async deleteDestination(id) {
       this.$Modal.confirm({
