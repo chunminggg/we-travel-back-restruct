@@ -1,7 +1,11 @@
 .DS_Store
 node_modules
+<<<<<<< HEAD
 /dist
 
+=======
+dist
+>>>>>>> 2fd66511c57222d803b8185a04e5059c6adcf143
 # local env files
 .env.local
 .env.*.local
@@ -13,7 +17,11 @@ yarn-error.log*
 
 # Editor directories and files
 .idea
+<<<<<<< HEAD
 .vscode
+=======
+# .vscode
+>>>>>>> 2fd66511c57222d803b8185a04e5059c6adcf143
 *.suo
 *.ntvs*
 *.njsproj

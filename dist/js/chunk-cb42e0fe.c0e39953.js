@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-cb42e0fe"],{"2b64":function(n,e,a){"use strict";a.r(e);var t=function(){var n=this,e=n.$createElement,a=n._self._c||e;return a("div",[a("Card",[a("h2",[n._v("ID: "+n._s(n.$route.params.id))])])],1)},u=[],r={name:"argu_page"},s=r,c=(a("bf25"),a("048f")),i=Object(c["a"])(s,t,u,!1,null,null,null);i.options.__file="params.vue";e["default"]=i.exports},"3b64":function(n,e,a){},bf25:function(n,e,a){"use strict";var t=a("3b64"),u=a.n(t);u.a}}]);
+//# sourceMappingURL=chunk-cb42e0fe.c0e39953.js.map
