@@ -61,12 +61,12 @@
     <div class="product">
       <label>是否特价:</label>
       <i-switch v-model="isRecommend"></i-switch>
-      <!-- <label>是否推荐:</label>
+      <label>是否推荐:</label>
       <i-switch v-model="isSpecialPrice"></i-switch>
       <label>是否跟团游</label>
       <i-switch v-model="isFollowTeam"></i-switch>
       <label>是否自由行</label>
-      <i-switch v-model="isFreeTravel"></i-switch> -->
+      <i-switch v-model="isFreeTravel"></i-switch>
     </div>
     <Select v-model="productTypeSelected" class="product" placeholder="请选择产品类型">
       <Option v-for="(item,index) in productTypes" :value="item.value" :key="index">{{ item.label }}</Option>
@@ -98,7 +98,7 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 
 import { quillEditor } from "vue-quill-editor";
-import { saveEditProduct,getProductDetail } from "@/libs/service";
+import { saveEditProduct,getProductDetail,getTheme } from "@/libs/service";
 import moment from 'moment'
 import richEditor from '@/components/productEditor/editor'
 export default {
@@ -198,9 +198,19 @@ export default {
   },
   created() {
     this.productId = this.$route.params.id;
+    this.getThemeData();
     this.getData(this.productId)
   },
   methods: {
+    async getThemeData(){
+         let data = await getTheme();
+      this.productTypes = data.map(item => {
+        return {
+          value: item.id,
+          label: item.attributes.name
+        };
+      });
+    },
       async getData(productId){
         let info = await getProductDetail(productId)
         this.id = info.id
@@ -298,7 +308,7 @@ export default {
 
       network.uploadProdut("", dict, function() {
         _self.$Message.success("另存为成功");
-        _self.$router.push("/productManage");
+        _self.$router.push("/components/drag_list_page");
       });
     },
     async submitData() {

@@ -61,6 +61,12 @@
     <div class="product">
       <label>是否置顶:</label>
       <i-switch v-model="isRecommend"></i-switch>
+       <label>是否推荐:</label>
+      <i-switch v-model="isSpecialPrice"></i-switch>
+      <label>是否跟团游</label>
+      <i-switch v-model="isFollowTeam"></i-switch>
+      <label>是否自由行</label>
+      <i-switch v-model="isFreeTravel"></i-switch>
     </div>
     <Select v-model="productTypeSelected" class="product" placeholder="请选择产品类型">
       <Option v-for="(item,index) in productTypes" :value="item.value" :key="index">{{ item.label }}</Option>
@@ -150,42 +156,6 @@ export default {
         }
       },
       productTypes: [
-        {
-          value: 1,
-          label: "巴厘岛"
-        },
-        {
-          value: 2,
-          label: "沙巴岛"
-        },
-        {
-          value: 3,
-          label: "芽庄"
-        },
-        {
-          value: 4,
-          label: "马尔代夫"
-        },
-        {
-          value: 5,
-          label: "普吉岛"
-        },
-        {
-          value: 6,
-          label: "长滩岛"
-        },
-        {
-          value: 7,
-          label: "帕劳"
-        },
-        {
-          value: 8,
-          label: "大溪地"
-        },
-        {
-          value: 9,
-          label: "苏梅岛"
-        }
       ],
       productTypeSelected: "",
       imageArray: [],
