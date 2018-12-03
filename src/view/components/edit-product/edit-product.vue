@@ -307,7 +307,7 @@ export default {
       let dict = this.getNowData();
 
       network.uploadProdut("", dict, function() {
-        _self.$Message.success("另存为成功");
+        _self.$Message.success("操作成功");
         _self.$router.push("/components/drag_list_page");
       });
     },
