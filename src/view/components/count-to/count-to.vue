@@ -39,29 +39,33 @@
         <Row :gutter="16">
           <Col span="6" v-for="(item,index) in tagArray" :key="index">
           <Card>
-              <a href="#" slot="extra" @click.prevent="handClose(index)">
-            <Icon type="ios-loop-strong"></Icon>
-            删除
-        </a>
+            <div slot="extra">
+              <Button type="error" @click.prevent="handleClose(index)">删除</Button>
+              <Button type="primary" style="margin-left:10px;" @click="handleEditPrice(item)">编辑</Button>
+            </div>
             <div>
-            成人票价:{{item.price}}
-          </div>
-          <div>
-            儿童票价:{{item.childPrice}}
-          </div>
-          <div>
-            <div>开始日期：{{item.startDate}}</div><div>结束日期：{{item.endDate}}</div>
-          </div>
-            </Card>
-          
+              成人票价:{{item.price}}
+            </div>
+            <div>
+              儿童票价:{{item.childPrice}}
+            </div>
+             <div>
+              备注:{{item.comment}}
+            </div>
+            <div>
+              <div>开始日期：{{item.startDate}}</div>
+              <div>结束日期：{{item.endDate}}</div>
+            </div>
+          </Card>
+
           </Col>
-          </Row>
+        </Row>
       </div>
     </div>
     <div class="product">
       <label>是否置顶:</label>
       <i-switch v-model="isRecommend"></i-switch>
-       <label>是否推荐:</label>
+      <label>是否推荐:</label>
       <i-switch v-model="isSpecialPrice"></i-switch>
       <label>是否跟团游</label>
       <i-switch v-model="isFollowTeam"></i-switch>
@@ -85,8 +89,11 @@
     <Modal v-model="priceModal" title="价格添加" @on-ok="priceAdd">
       <Input v-model="singlePrice" placeholder="请输入成人价格" style="width: 300px"></Input>
       <Input v-model="singleChildPrice" placeholder="请输入儿童价格" style="width: 300px" class="product"></Input>
-      <DatePicker v-model="singleDate"  placeholder="选择日期" style="width: 300px" type="daterange" class="product"></DatePicker>
+             <Input v-model="singlePriceComment" placeholder="请输入备注" style="width: 300px" class="product"></Input>
+
+      <DatePicker v-model="singleDate" placeholder="选择日期" style="width: 300px" type="daterange" class="product"></DatePicker>
     </Modal>
+    <price-form ref="priceForm" @priceEdit="priceEdit"></price-form>
   </div>
 </template>
 
@@ -100,14 +107,16 @@ import "quill/dist/quill.bubble.css";
 
 import { quillEditor } from "vue-quill-editor";
 import { createNewProduct, getTheme, getDestination } from "@/libs/service";
-import richEditor from '@/components/productEditor/editor'
+import richEditor from "@/components/productEditor/editor";
 import moment from "moment";
+import priceForm from '@/components/product/priceForm'
 export default {
   components: {
     imageUpload,
     Editor,
     quillEditor,
-    richEditor
+    richEditor,
+    priceForm
   },
   data() {
     return {
@@ -117,7 +126,7 @@ export default {
         { content: "", placeHolder: "费用说明" },
         { content: "", placeHolder: "预订须知" }
       ],
-
+      singlePriceComment:'',
       productId: "",
       //产品编号
       productNumber: "",
@@ -155,8 +164,7 @@ export default {
           return date && date.valueOf() < Date.now() - 86400000;
         }
       },
-      productTypes: [
-      ],
+      productTypes: [],
       productTypeSelected: "",
       imageArray: [],
       fileArray: []
@@ -194,7 +202,7 @@ export default {
 
         // _self.productEndDate = data.endDate
         _self.productTypeSelected = data.type;
-        this.configRichConent()
+        this.configRichConent();
       },
       error => {
         _self.$Message.error("获取信息失败,请重试");
@@ -202,10 +210,13 @@ export default {
     );
   },
   methods: {
-    configRichConent(){
-      this.richItems.map((item,index)=>{
-        this.$refs[`rich${index}`][0].htmlText = item.content
-      })
+     handleEditPrice(item){
+      this.$refs.priceForm.configData(item)
+    },
+    configRichConent() {
+      this.richItems.map((item, index) => {
+        this.$refs[`rich${index}`][0].htmlText = item.content;
+      });
     },
     // 获取主题数据
     async getThemeData() {
@@ -222,13 +233,26 @@ export default {
     },
     // 价格添加
     priceAdd() {
-      let dict = {
+       let dict = {
         startDate: moment(this.singleDate[0]).format("YYYY-MM-DD"),
-        endDate: moment(this.singleDate[0]).format("YYYY-MM-DD"),
+        endDate: moment(this.singleDate[1]).format("YYYY-MM-DD"),
         price: this.singlePrice,
-        childPrice: this.singleChildPrice
+        childPrice: this.singleChildPrice,
+        comment:this.singlePriceComment
       };
+
       this.tagArray.push(dict);
+    },
+       priceEdit(params,index){
+       let dict = {
+        startDate: moment(params.dateRange[0]).format("YYYY-MM-DD"),
+        endDate: moment(params.dateRange[1]).format("YYYY-MM-DD"),
+        price: params.price,
+        childPrice: params.childPrice,
+        comment:params.comment
+      };
+      this.$set(this.tagArray,index,dict)
+      this.tagArray[index] = dict
     },
     //价格选择
     priceSelect() {
@@ -243,15 +267,15 @@ export default {
     getFileArray(data) {
       this.fileArray = data;
     },
-    getRichContent(){
-      this.richItems.map((item,index)=>{
-        let editorContent = this.$refs[`rich${index}`][0].htmlText
-        item.content = editorContent
-      })
+    getRichContent() {
+      this.richItems.map((item, index) => {
+        let editorContent = this.$refs[`rich${index}`][0].htmlText;
+        item.content = editorContent;
+      });
     },
     getNowData() {
       var _self = this;
-      this.getRichContent()
+      this.getRichContent();
       var dict = {
         startDate: _self.productStartDate,
         // endDate: _self.productEndDate,
@@ -270,7 +294,7 @@ export default {
         isFreeTravel: _self.isFreeTravel,
         tagArray: _self.tagArray
       };
-      debugger
+      debugger;
       return dict;
     },
     // 另存为

@@ -35,27 +35,31 @@
     </Input>
     <div class="product">
       <Button type="info" class="product" @click="priceSelect">价格添加</Button>
-       <div class="price-card">
+      <div class="price-card">
         <Row :gutter="16">
           <Col span="6" v-for="(item,index) in tagArray" :key="index">
           <Card>
-              <a href="#" slot="extra" @click.prevent="handClose(index)">
-            <Icon type="ios-loop-strong"></Icon>
-            删除
-        </a>
+              <div slot="extra">
+                <Button type="error" @click="handleClose(index)">删除</Button>
+                <Button type="primary" style="margin-left:10px;" @click="handleEditPrice(item)">编辑</Button>
+              </div>
             <div>
-            成人票价:{{item.price}}
-          </div>
-          <div>
-            儿童票价:{{item.childPrice}}
-          </div>
-          <div>
-            <div>开始日期：{{item.startDate}}</div><div>结束日期：{{item.endDate}}</div>
-          </div>
-            </Card>
-          
+              成人票价:{{item.price}}
+            </div>
+            <div>
+              儿童票价:{{item.childPrice}}
+            </div>
+             <div>
+              备注:{{item.comment}}
+            </div>
+            <div>
+              <div>开始日期：{{item.startDate}}</div>
+              <div>结束日期：{{item.endDate}}</div>
+            </div>
+          </Card>
+
           </Col>
-          </Row>
+        </Row>
       </div>
     </div>
     <div class="product">
@@ -76,16 +80,19 @@
     </image-upload>
     <div v-for="(richItem, index) in richItems" :key="index" class="myProduct">
       <Alert>{{richItem.placeHolder}}</Alert>
-       <!-- <quill-editor v-model="richItem.content"></quill-editor> -->
+      <!-- <quill-editor v-model="richItem.content"></quill-editor> -->
       <rich-editor :ref="'rich'+index" :idx="index"></rich-editor>
     </div>
     <Button type="success" long @click="submitData" class="product">确认提交</Button>
     <Button type="error" long @click="elseSubmitData" class="product">另存为</Button>
 
     <Modal v-model="priceModal" title="价格添加" @on-ok="priceAdd">
-      <Input v-model="singlePrice" placeholder="请输入价格" style="width: 300px"></Input>
-      <DatePicker v-model="singleDate" type="daterange" placeholder="选择日期" style="width: 300px" class="product"></DatePicker>
+      <Input v-model="singlePrice" placeholder="请输入成人价格" style="width: 300px"></Input>
+      <Input v-model="singleChildPrice" placeholder="请输入儿童价格" style="width: 300px" class="product"></Input>
+       <Input v-model="singlePriceComment" placeholder="请输入备注" style="width: 300px" class="product"></Input>
+      <DatePicker v-model="singleDate" placeholder="选择日期" style="width: 300px" type="daterange" class="product"></DatePicker>
     </Modal>
+  <price-form ref="priceForm" @priceEdit="priceEdit"></price-form>
   </div>
 </template>
 
@@ -98,15 +105,17 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 
 import { quillEditor } from "vue-quill-editor";
-import { saveEditProduct,getProductDetail,getTheme } from "@/libs/service";
-import moment from 'moment'
-import richEditor from '@/components/productEditor/editor'
+import { saveEditProduct, getProductDetail, getTheme } from "@/libs/service";
+import moment from "moment";
+import richEditor from "@/components/productEditor/editor";
+import priceForm from '@/components/product/priceForm'
 export default {
   components: {
     imageUpload,
     Editor,
     quillEditor,
-    richEditor
+    richEditor,
+    priceForm
   },
   data() {
     return {
@@ -116,7 +125,7 @@ export default {
         { content: "", placeHolder: "费用说明" },
         { content: "", placeHolder: "预订须知" }
       ],
-     id:'',
+      id: "",
       productId: "",
       //产品编号
       productNumber: "",
@@ -154,56 +163,27 @@ export default {
         }
       },
       productTypes: [
-        {
-          value: 1,
-          label: "巴厘岛"
-        },
-        {
-          value: 2,
-          label: "沙巴岛"
-        },
-        {
-          value: 3,
-          label: "芽庄"
-        },
-        {
-          value: 4,
-          label: "马尔代夫"
-        },
-        {
-          value: 5,
-          label: "普吉岛"
-        },
-        {
-          value: 6,
-          label: "长滩岛"
-        },
-        {
-          value: 7,
-          label: "帕劳"
-        },
-        {
-          value: 8,
-          label: "大溪地"
-        },
-        {
-          value: 9,
-          label: "苏梅岛"
-        }
       ],
       productTypeSelected: "",
       imageArray: [],
-      fileArray: []
+      fileArray: [],
+      singlePriceComment:'',
+      singleChildPrice:'',
+
+
     };
   },
   created() {
     this.productId = this.$route.params.id;
     this.getThemeData();
-    this.getData(this.productId)
+    this.getData(this.productId);
   },
   methods: {
-    async getThemeData(){
-         let data = await getTheme();
+    handleEditPrice(item){
+      this.$refs.priceForm.configData(item)
+    },
+    async getThemeData() {
+      let data = await getTheme();
       this.productTypes = data.map(item => {
         return {
           value: item.id,
@@ -211,58 +191,70 @@ export default {
         };
       });
     },
-      async getData(productId){
-        let info = await getProductDetail(productId)
-        this.id = info.id
-        let data = info.attributes
-        this.richItems = data.detailContent;
-        this.productNumber = data.onleyId;
-        this.productPlace = data.place;
-        this.productDes = data.describe;
-        this.productName = data.name;
-        this.productPrice = data.price;
-        this.imageArray = data.imageArray;
-        this.fileArray = data.fileArray;
-        if (data.fileArray == undefined) {
-          this.fileArray = [];
-        }
-        this.productStartDate = data.startDate;
-        this.isFollowTeam = data.isFollowTeam || false;
-        this.isFreeTravel = data.isFreeTravel || false;
-        this.tagArray = data.tagArray || [];
-        if (data.isRecommend != undefined) {
-          this.isRecommend = data.isRecommend;
-        }
-        if (data.isSpecialPrice != undefined) {
-          this.isSpecialPrice = data.isSpecialPrice;
-        }
-        this.productTypeSelected = data.type;
-        this.configRichConent()
-      },
-      configRichConent(){
-      this.richItems.map((item,index)=>{
-        this.$refs[`rich${index}`][0].htmlText = item.content
-      })
+    async getData(productId) {
+      let info = await getProductDetail(productId);
+      this.id = info.id;
+      let data = info.attributes;
+      this.richItems = data.detailContent;
+      this.productNumber = data.onleyId;
+      this.productPlace = data.place;
+      this.productDes = data.describe;
+      this.productName = data.name;
+      this.productPrice = data.price;
+      this.imageArray = data.imageArray;
+      this.fileArray = data.fileArray;
+      if (data.fileArray == undefined) {
+        this.fileArray = [];
+      }
+      this.productStartDate = data.startDate;
+      this.isFollowTeam = data.isFollowTeam || false;
+      this.isFreeTravel = data.isFreeTravel || false;
+      this.tagArray = data.tagArray || [];
+      if (data.isRecommend != undefined) {
+        this.isRecommend = data.isRecommend;
+      }
+      if (data.isSpecialPrice != undefined) {
+        this.isSpecialPrice = data.isSpecialPrice;
+      }
+      this.productTypeSelected = data.type;
+      this.configRichConent();
     },
-     getRichContent(){
-      this.richItems.map((item,index)=>{
-        let editorContent = this.$refs[`rich${index}`][0].htmlText
-        item.content = editorContent
-      })
+    configRichConent() {
+      this.richItems.map((item, index) => {
+        this.$refs[`rich${index}`][0].htmlText = item.content;
+      });
+    },
+    getRichContent() {
+      this.richItems.map((item, index) => {
+        let editorContent = this.$refs[`rich${index}`][0].htmlText;
+        item.content = editorContent;
+      });
     },
     handleClose(index) {
       this.tagArray.splice(index, 1);
     },
     // 价格添加
     priceAdd() {
-     let dict = {
+      let dict = {
         startDate: moment(this.singleDate[0]).format("YYYY-MM-DD"),
-        endDate: moment(this.singleDate[0]).format("YYYY-MM-DD"),
+        endDate: moment(this.singleDate[1]).format("YYYY-MM-DD"),
         price: this.singlePrice,
-        childPrice: this.singleChildPrice
+        childPrice: this.singleChildPrice,
+        comment:this.singlePriceComment
       };
 
       this.tagArray.push(dict);
+    },
+    priceEdit(params,index){
+       let dict = {
+        startDate: moment(params.dateRange[0]).format("YYYY-MM-DD"),
+        endDate: moment(params.dateRange[1]).format("YYYY-MM-DD"),
+        price: params.price,
+        childPrice: params.childPrice,
+        comment:params.comment
+      };
+      this.$set(this.tagArray,index,dict)
+      this.tagArray[index] = dict
     },
     //价格选择
     priceSelect() {
@@ -279,7 +271,7 @@ export default {
     },
     getNowData() {
       var _self = this;
-       this.getRichContent()
+      this.getRichContent();
       var dict = {
         startDate: _self.productStartDate,
         // endDate: _self.productEndDate,
@@ -297,7 +289,7 @@ export default {
         isFollowTeam: _self.isFollowTeam,
         isFreeTravel: _self.isFreeTravel,
         tagArray: _self.tagArray,
-        id:_self.id,
+        id: _self.id
       };
       return dict;
     },
@@ -319,9 +311,9 @@ export default {
         }
         let data = await saveEditProduct(dict);
         this.$Message.success("保存成功");
-        this.$nextTick(()=>{
-          this.$router.go(0)
-        })
+        this.$nextTick(() => {
+          this.$router.go(0);
+        });
       } catch (error) {
         this.$Message.warning("操作失败");
       }
@@ -331,3 +323,8 @@ export default {
 </script>
 
 
+<style scoped lang="less">
+.price-card{
+  margin-top:10px;
+}
+</style>
