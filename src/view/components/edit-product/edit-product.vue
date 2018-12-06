@@ -36,7 +36,7 @@
       <span slot="prepend">开始时间</span>
       </Input>
       <div class="product">
-        <Button type="info" class="product" @click="priceSelect">价格添加</Button>
+        <Button type="info" class="product" @click="priceSelect">价格视图</Button>
         <div class="price-card">
           <Row :gutter="16">
             <Col span="6" v-for="(item,index) in tagArray" :key="index">
@@ -90,7 +90,7 @@
     </div>
     <div v-if="isShowAddPriceView">
       <div>
-        <Button @click="isShowAddPriceView = false">返回</Button>
+        
       </div>
       <price-view ref="holePriceView"></price-view>
     </div>

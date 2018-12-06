@@ -1,13 +1,20 @@
 <template>
 
+  <div>
     <div>
-        <calendar ref="calendar" style="height: 800px;" :useCreationPopup="isShowPopup" :useDetailPopup="isShowPopup" view="month" @afterRenderSchedule="onAfterRenderSchedule" @beforeCreateSchedule="onBeforeCreateSchedule" @beforeDeleteSchedule="onBeforeDeleteSchedule" @beforeUpdateSchedule="onBeforeUpdateSchedule" @clickDayname="onClickDayname" @clickSchedule="onClickSchedule" @clickTimezonesCollapseBtn="onClickTimezonesCollapseBtn" :schedules="scheduleList" :scheduleView="scheduleView" />
+      <Button @click="$parent.isShowAddPriceView = false">返回</Button>
+      <Button @click="lastMonth">上个月</Button>
+      <Button @click="nextMonth">下个月</Button>
+      <span class="nowDate">{{nowDate}}</span>
     </div>
+    <calendar ref="tuiCalendar" style="height: 800px;" :useCreationPopup="isShowPopup" :useDetailPopup="isShowPopup" view="month" @afterRenderSchedule="onAfterRenderSchedule" @beforeCreateSchedule="onBeforeCreateSchedule" @beforeDeleteSchedule="onBeforeDeleteSchedule" @beforeUpdateSchedule="onBeforeUpdateSchedule" @clickDayname="onClickDayname" @clickSchedule="onClickSchedule" @clickTimezonesCollapseBtn="onClickTimezonesCollapseBtn" :schedules="scheduleList" :scheduleView="scheduleView" />
+  </div>
 </template>
 
 <script>
 import "tui-calendar/dist/tui-calendar.css";
 import { Calendar } from "@toast-ui/vue-calendar";
+import moment from "moment";
 export default {
   components: {
     calendar: Calendar
@@ -27,11 +34,31 @@ export default {
         }
       ],
       scheduleList: [],
-      currentDateItem: {}
+      currentDateItem: {},
+      nowDate: ""
     };
   },
-  mounted() {},
+  mounted() {
+    this.checkDate();
+  },
+  created() {},
   methods: {
+    checkDate() {
+      let tzNowDate = this.$refs.tuiCalendar.invoke("getDate");
+      this.nowDate = moment(tzNowDate).format("YYYY-MM");
+    },
+    lastMonth() {
+      this.$refs.tuiCalendar.invoke("prev");
+       let nextMonth = moment(this.nowDate).subtract(1, 'months'),
+      newNext = moment(nextMonth).format('YYYY-MM');
+      this.nowDate = newNext
+    },
+    nextMonth() {
+      this.$refs.tuiCalendar.invoke("next");
+      let nextMonth = moment(this.nowDate).add(1, 'months'),
+      newNext = moment(nextMonth).format('YYYY-MM');
+      this.nowDate = newNext
+    },
     addSchedult() {
       let params = {
         id: this.scheduleList.length + 1,
@@ -71,5 +98,10 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less" scoped>
+.nowDate {
+  font-size: 16px;
+  margin-left: 20px;
+  line-height: 20px;
+}
 </style>
