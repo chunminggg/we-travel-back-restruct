@@ -14,6 +14,9 @@
 
 <template>
   <div class="content">
+    <div v-if="!isShowAddPriceView">
+
+   
     <h2>产品发布</h2>
     <Input v-model="productNumber" placeholder="" class="product">
     <span slot="prepend">产品编号</span>
@@ -85,7 +88,13 @@
     </div>
     <Button type="success" long @click="submitData" class="product">确认提交</Button>
     <Button type="error" long @click="elseSubmitData" class="product">另存为</Button>
-
+ </div>
+ <div v-if="isShowAddPriceView">
+   <div>
+     <Button @click="isShowAddPriceView = false">返回</Button>
+   </div>
+<price-view></price-view>
+ </div>
     <Modal v-model="priceModal" title="价格添加" @on-ok="priceAdd">
       <Input v-model="singlePrice" placeholder="请输入成人价格" style="width: 300px"></Input>
       <Input v-model="singleChildPrice" placeholder="请输入儿童价格" style="width: 300px" class="product"></Input>
@@ -109,16 +118,19 @@ import { saveEditProduct, getProductDetail, getTheme } from "@/libs/service";
 import moment from "moment";
 import richEditor from "@/components/productEditor/editor";
 import priceForm from '@/components/product/priceForm'
+import priceView from '@/components/calendar/index'
 export default {
   components: {
     imageUpload,
     Editor,
     quillEditor,
     richEditor,
-    priceForm
+    priceForm,
+    priceView
   },
   data() {
     return {
+      isShowAddPriceView:false,
       richItems: [
         { content: "", placeHolder: "线路特色" },
         { content: "", placeHolder: "行程介绍" },
@@ -258,7 +270,8 @@ export default {
     },
     //价格选择
     priceSelect() {
-      this.priceModal = true;
+      this.isShowAddPriceView = true
+      // this.priceModal = true;
     },
     getRichTextArray(data) {
       this.richItems[data.index].content = data.content;

@@ -11,9 +11,11 @@
     "test:e2e": "vue-cli-service test:e2e"
   },
   "dependencies": {
+    "@lkmadushan/vue-tuicalendar": "^0.1.6",
     "@progress/kendo-editor-vue-wrapper": "^2018.3.1025",
     "@progress/kendo-theme-default": "^2.61.0",
     "@progress/kendo-ui": "^2018.3.1122",
+    "@toast-ui/vue-calendar": "^1.0.1",
     "axios": "^0.18.0",
     "clipboard": "^2.0.0",
     "codemirror": "^5.38.0",
@@ -26,9 +28,11 @@
     "iview-area": "^1.5.17",
     "js-cookie": "^2.2.0",
     "leancloud-storage": "^3.11.0",
+    "material-design-icons-iconfont": "^4.0.3",
     "moment": "^2.22.2",
     "simplemde": "^1.11.2",
     "sortablejs": "^1.7.0",
+    "tui-calendar": "^1.8.0",
     "vue": "^2.5.10",
     "vue-i18n": "^7.8.0",
     "vue-quill-editor": "^3.0.6",
