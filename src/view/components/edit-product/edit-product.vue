@@ -55,8 +55,7 @@
                 备注:{{item.comment}}
               </div>
               <div>
-                <div>开始日期：{{item.startDate}}</div>
-                <div>结束日期：{{item.endDate}}</div>
+                <div>发班日期{{item.startDate}}</div>
               </div>
             </Card>
 
@@ -89,18 +88,9 @@
       <Button type="error" long @click="elseSubmitData" class="product">另存为</Button>
     </div>
     <div v-if="isShowAddPriceView">
-      <div>
-        
-      </div>
-      <price-view ref="holePriceView"></price-view>
+      <price-view ref="holePriceView" :tagArray="tagArray"></price-view>
     </div>
-    <Modal v-model="priceModal" title="价格添加" @on-ok="priceAdd">
-      <Input v-model="singlePrice" placeholder="请输入成人价格" style="width: 300px"></Input>
-      <Input v-model="singleChildPrice" placeholder="请输入儿童价格" style="width: 300px" class="product"></Input>
-      <Input v-model="singlePriceComment" placeholder="请输入备注" style="width: 300px" class="product"></Input>
-      <DatePicker v-model="singleDate" placeholder="选择日期" style="width: 300px" type="daterange" class="product"></DatePicker>
-    </Modal>
-    <price-form ref="priceForm" @priceEdit="priceEdit"></price-form>
+  
   </div>
 </template>
 
@@ -243,22 +233,18 @@ export default {
     },
     // 价格添加
     priceAdd() {
-      this.$refs.holePriceView.addSchedult()
-      return
-      let dict = {
-        startDate: moment(this.singleDate[0]).format("YYYY-MM-DD"),
-        endDate: moment(this.singleDate[1]).format("YYYY-MM-DD"),
-        price: this.singlePrice,
+      let params ={
+         price: this.singlePrice,
         childPrice: this.singleChildPrice,
         comment: this.singlePriceComment
-      };
-
-      this.tagArray.push(dict);
+      }
+      this.$refs.holePriceView.addSchedult(params)
+      return
+      
     },
     priceEdit(params, index) {
       let dict = {
-        startDate: moment(params.dateRange[0]).format("YYYY-MM-DD"),
-        endDate: moment(params.dateRange[1]).format("YYYY-MM-DD"),
+        startDate: params.startDate,
         price: params.price,
         childPrice: params.childPrice,
         comment: params.comment
