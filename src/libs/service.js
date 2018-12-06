@@ -50,6 +50,10 @@ export const editDestination = (name, id) => {
 export const userLogin = (userName, password) => {
   return AV.User.logInWithMobilePhone(userName, password)
 }
+export const deleteUser = (id) => {
+  let item = AV.Object.createWithoutData('_User', id)
+  return item.destroy()
+}
 export const getUsers = () => {
   let users = new AV.Query('_User');
   return users.find()
