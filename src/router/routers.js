@@ -106,6 +106,14 @@ export default [{
           title: '订单管理',
         },
         component: () => import('@/view/orderManage/index.vue')
+      },{
+        path: 'userManage',
+        name: 'userManage',
+        meta: {
+          icon: 'ios-infinite',
+          title: '用户管理',
+        },
+        component: () => import('@/view/userManage/index.vue')
       },
     ]
   },

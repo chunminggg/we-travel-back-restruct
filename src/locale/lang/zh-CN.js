@@ -4,6 +4,7 @@ export default {
   theme:'主题管理',
   destination:'目的地管理',
   orderManage:'订单管理',
+  userManage:'用户管理',
   count_to_page: '产品发布',
   tables_page: '多功能表格',
   split_pane_page: '分割窗口',

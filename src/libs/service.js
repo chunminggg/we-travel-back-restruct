@@ -50,6 +50,10 @@ export const editDestination = (name, id) => {
 export const userLogin = (userName, password) => {
   return AV.User.logInWithMobilePhone(userName, password)
 }
+export const getUsers = () => {
+  let users = new AV.Query('_User');
+  return users.find()
+}
 export const uploadFile = (file) => {
   let name = file.name,
     dataFile = new AV.File(name, file)
