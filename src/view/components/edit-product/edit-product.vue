@@ -36,9 +36,9 @@
       <span slot="prepend">开始时间</span>
       </Input>
       <div class="product">
-        <Button type="info" class="product" @click="priceSelect">价格视图</Button>
+        <Button type="info" class="product" @click="priceSelect">进入价格视图</Button>
         <div class="price-card">
-          <Row :gutter="16">
+          <!-- <Row :gutter="16">
             <Col span="6" v-for="(item,index) in tagArray" :key="index">
             <Card>
               <div slot="extra">
@@ -60,7 +60,7 @@
             </Card>
 
             </Col>
-          </Row>
+          </Row> -->
         </div>
       </div>
       <div class="product">
@@ -255,7 +255,9 @@ export default {
     //价格选择
     priceSelect() {
       this.isShowAddPriceView = true;
-      // this.priceModal = true;
+      this.$nextTick(()=>{
+        this.$refs.holePriceView.configPriceView()
+      })
     },
     getRichTextArray(data) {
       this.richItems[data.index].content = data.content;
@@ -305,6 +307,7 @@ export default {
         var dict = this.getNowData();
         if (!this.imageArray.length) {
           this.$Message.error("请上传图片至少一张");
+          return
         }
         let data = await saveEditProduct(dict);
         this.$Message.success("保存成功");

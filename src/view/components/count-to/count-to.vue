@@ -14,6 +14,7 @@
 
 <template>
   <div class="content">
+     <div v-if="!isShowAddPriceView">
     <h2>产品发布</h2>
     <Input v-model="productNumber" placeholder="" class="product">
     <span slot="prepend">产品编号</span>
@@ -34,9 +35,9 @@
     <span slot="prepend">开始时间</span>
     </Input>
     <div class="product">
-      <Button type="info" class="product" @click="priceSelect">价格添加</Button>
+      <Button type="info" class="product" @click="priceSelect">进入价格视图</Button>
       <div class="price-card">
-        <Row :gutter="16">
+        <!-- <Row :gutter="16">
           <Col span="6" v-for="(item,index) in tagArray" :key="index">
           <Card>
             <div slot="extra">
@@ -53,13 +54,12 @@
               备注:{{item.comment}}
             </div>
             <div>
-              <div>开始日期：{{item.startDate}}</div>
-              <div>结束日期：{{item.endDate}}</div>
+              <div>发班日期{{item.startDate}}</div>
             </div>
           </Card>
 
           </Col>
-        </Row>
+        </Row> -->
       </div>
     </div>
     <div class="product">
@@ -85,15 +85,10 @@
     </div>
     <Button type="success" long @click="submitData" class="product">确认提交</Button>
     <Button type="error" long @click="elseSubmitData" class="product">另存为</Button>
-
-    <Modal v-model="priceModal" title="价格添加" @on-ok="priceAdd">
-      <Input v-model="singlePrice" placeholder="请输入成人价格" style="width: 300px"></Input>
-      <Input v-model="singleChildPrice" placeholder="请输入儿童价格" style="width: 300px" class="product"></Input>
-             <Input v-model="singlePriceComment" placeholder="请输入备注" style="width: 300px" class="product"></Input>
-
-      <DatePicker v-model="singleDate" placeholder="选择日期" style="width: 300px" type="daterange" class="product"></DatePicker>
-    </Modal>
-    <price-form ref="priceForm" @priceEdit="priceEdit"></price-form>
+    </div>
+    <div v-if="isShowAddPriceView">
+      <price-view ref="holePriceView" :tagArray="tagArray"></price-view>
+    </div>
   </div>
 </template>
 
@@ -110,16 +105,19 @@ import { createNewProduct, getTheme, getDestination } from "@/libs/service";
 import richEditor from "@/components/productEditor/editor";
 import moment from "moment";
 import priceForm from '@/components/product/priceForm'
+import priceView from "@/components/calendar/index";
 export default {
   components: {
     imageUpload,
     Editor,
     quillEditor,
     richEditor,
-    priceForm
+    priceForm,
+    priceView
   },
   data() {
     return {
+      isShowAddPriceView: false,
       richItems: [
         { content: "", placeHolder: "线路特色" },
         { content: "", placeHolder: "行程介绍" },
@@ -256,6 +254,11 @@ export default {
     },
     //价格选择
     priceSelect() {
+      this.isShowAddPriceView = true;
+      this.$nextTick(()=>{
+        this.$refs.holePriceView.configPriceView()
+      })
+      return
       this.priceModal = true;
     },
     getRichTextArray(data) {
@@ -294,7 +297,6 @@ export default {
         isFreeTravel: _self.isFreeTravel,
         tagArray: _self.tagArray
       };
-      debugger;
       return dict;
     },
     // 另存为
