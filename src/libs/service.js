@@ -54,9 +54,13 @@ export const deleteUser = (id) => {
   let item = AV.Object.createWithoutData('_User', id)
   return item.destroy()
 }
-export const getUsers = () => {
+export const getUsers = (params, pageIndex) => {
   let users = new AV.Query('_User');
-  return users.find()
+  users.startsWith('name', params.name);
+  users.startsWith('mobilePhoneNumber', params.phone);
+  const promise1 = users.count();
+  const promise2 = users.limit(10).skip((pageIndex - 1) * 10).find()
+  return Promise.all([promise1, promise2])
 }
 export const uploadFile = (file) => {
   let name = file.name,
