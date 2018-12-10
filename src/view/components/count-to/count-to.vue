@@ -115,6 +115,16 @@ export default {
     priceForm,
     priceView
   },
+   watch:{
+    isShowAddPriceView(newVal){
+      if (!newVal) {
+        this.$nextTick(()=>{
+          this.configRichConent()
+        })
+        
+      }
+    },
+  },
   data() {
     return {
       isShowAddPriceView: false,
