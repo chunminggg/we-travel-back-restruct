@@ -1,49 +1,82 @@
 <template>
   <div>
-    <Table :columns="columns" :data="data">
+    <Card title="产品过滤">
+      <Row :gutter="16">
+        <Col span="6">
+        <Select v-model="params.themeSelected" placeholder="主题过滤" @on-change="themeChange" clearable>
+          <Option v-for="item in productTypes" :key="item.value" :value="item.value">{{item.label}}</Option>
+        </Select>
+        </Col>
+      </Row>
+    </Card>
+    <Table
+      :columns="columns"
+      :data="data"
+      style="margin-top:10px;"
+    >
 
     </Table>
-    <Page :total="total" @on-change="pageChange" style="margin-top:10px;"></Page>
+    <Page
+      :total="total"
+      @on-change="pageChange"
+      style="margin-top:10px;"
+    ></Page>
   </div>
 </template>
 
 <script>
-import { getProductList, deleteProduct } from "@/libs/service";
+import { getProductList, deleteProduct, getTheme } from "@/libs/service";
 export default {
   data() {
+    let that = this
     return {
+      params:{
+        themeSelected:''
+      },
       total: 0,
+      productTypes: [],
       columns: [
         {
           key: "name",
           title: "名称"
         },
         {
-          title: "操作",
-          render: (h, params) => {
-            return (
-              <a
-                style="color:red"
-                onClick={() => {
-                  this.deleteItem(params);
-                }}
-              >
-                删除
-              </a>
-            );
+          key:'type',
+          title:'所属主题',
+          render(h,params){
+            let themeName = that.productTypes.find(item => params.row.type == item.value)
+            return (<span>{themeName.label}</span>)
           }
+        },
+        {
+          key:'price',
+          title:'价格'
         },
         {
           title: "操作",
           render: (h, params) => {
             return (
-              <a
-                onClick={() => {
-                  this.editItem(params);
-                }}
-              >
-                编辑
-              </a>
+              <div>
+                <i-button
+                  type="primary"
+                  onClick={() => {
+                    this.editItem(params);
+                  }}
+                  size="small"
+                >
+                  编辑
+                </i-button>
+                <i-button
+                  type="error"
+                  size="small"
+                  style="margin-left:10px;"
+                  onClcik={() => {
+                    this.deleteItem(params);
+                  }}
+                >
+                  删除
+                </i-button>
+              </div>
             );
           }
         }
@@ -53,12 +86,26 @@ export default {
   },
   mounted() {
     this.getData();
+    this.getThemeData();
   },
   methods: {
     async getData() {
-      let data = await getProductList();
+      let data = await getProductList(this.params);
       this.data = data.map(item => {
         return Object.assign(item.attributes, { id: item.id });
+      });
+    },
+    themeChange(value){
+      this.params.themeSelected = value || ''
+      this.getData()
+    },
+    async getThemeData() {
+      let data = await getTheme();
+      this.productTypes = data.map(item => {
+        return {
+          value: item.id,
+          label: item.attributes.name
+        };
       });
     },
     deleteItem(params) {
@@ -79,7 +126,7 @@ export default {
       });
     },
     editItem(params) {
-      this.$router.push(`edit_product/${params.row.id}`)
+      this.$router.push(`edit_product/${params.row.id}`);
     },
     pageChange(pageIndex) {}
   }

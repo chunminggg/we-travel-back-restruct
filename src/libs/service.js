@@ -94,6 +94,7 @@ export const getProductList = (params) => {
   query.select(['isSort', 'isFreeTravel', 'isRecommend', 'isFollowTeam', 'isSpecialPrice', 'place', 'name', 'startDate', 'type', 'endDate', 'onleyId', 'price', 'describe', 'imageArray', 'countNumber'])
   query.addDescending('countNumber')
   query.addDescending('updatedAt')
+  query.contains('type',params.themeSelected)
   return query.find()
 }
 export const deleteProduct = (productId) => {
