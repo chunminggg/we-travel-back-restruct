@@ -3,12 +3,12 @@
     <!-- <div>
       <Button type="primary" @click="addDestination">添加用户</Button>
     </div> -->
-    <!-- <Form inline>
+    <Form inline>
       <FormItem>
         <Input
           style="width:300px;"
-          v-model="searchParams.name"
-          placeholder="请输入姓名"
+          v-model="searchParams.id"
+          placeholder="请输入订单号"
         ></Input>
       </FormItem>
       <FormItem>
@@ -21,7 +21,7 @@
       <FormItem>
         <Button @click="handleSearch">查询</Button>
       </FormItem>
-    </Form> -->
+    </Form>
     <div style="margin-top:10px;">
       <NewTable
         ref="table"
@@ -38,6 +38,7 @@ import moment from 'moment';
 import NewTable from '@/components/newTable';
 import {
   getOrders,
+  handleOrder
 } from "@/libs/service";
 export default {
   components: {
@@ -52,10 +53,14 @@ export default {
       isShowEditModal: false,
       request: getOrders,
       searchParams: {
-        name: '',
+        id: '',
         phone: ''
       },
       columns: [
+        {
+          title: '订单号',
+          key: 'objectId'
+        },
         {
           title: "姓名",
           key: 'name'
@@ -63,6 +68,18 @@ export default {
         {
           title: "手机号",
           key: 'phoneNumber'
+        },
+        {
+          title: '产品名称',
+          render: (h, params) => {
+            return <span>{params.row.targetProduct.name}</span>
+          }
+        },
+        {
+          title: '价格',
+          render: (h, params) => {
+            return <span>{params.row.targetProduct.price}</span>
+          }
         },
         {
           title: "出发日期",
@@ -80,33 +97,28 @@ export default {
           title: '儿童数量',
           key: 'secondCount'
         },
-        // {
-        //   title: "操作",
-        //   key: "action",
-        //   render: (h, params) => {
-        //     return (
-        //       <div>
-        //         <i-button
-        //           type="error"
-        //           onClick={() => {
-        //             this.delete(params.row.objectId);
-        //           }}
-        //         >
-        //           删除
-        //         </i-button>
-        //         <i-button
-        //           type="primary"
-        //           style="margin-left:10px"
-        //           onClick={() => {
-        //             this.showEditModal(params);
-        //           }}
-        //         >
-        //           编辑
-        //         </i-button>
-        //       </div>
-        //     );
-        //   }
-        // }
+        {
+          title: "操作",
+          key: "action",
+          width: 138,
+          render: (h, params) => {
+            if (params.row.ifHandle) {
+              return <span>已处理</span>
+            }
+            return (
+              <div>
+                <i-button
+                  type="primary"
+                  onClick={() => {
+                    this.handle(params.row.objectId);
+                  }}
+                >
+                  标记为已处理
+                </i-button>
+              </div>
+            );
+          }
+        }
       ],
       isShowAddModal: false,
       addName: "",
@@ -114,6 +126,11 @@ export default {
     };
   },
   methods: {
+    handle(id) {
+      handleOrder(id).then(data => {
+        this.$refs.table.getTableData();
+      });
+    },
     handleSearch() {
       this.$refs.table.getTableData();
     },

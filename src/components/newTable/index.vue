@@ -60,12 +60,6 @@ export default {
       if (!index) {
         this.pageParams.pageIndex = 1;
       }
-      // this.request(this.searchParams).then(d => {
-      //   const data = d.map(v => v.toJSON());
-      //   debugger
-      //   this.total = data.TotalCount || data.totalCount || data.totalcount;
-      //   this.loading = false;
-      // });
       this.request(this.searchParams, this.pageParams.pageIndex).then((arr) => {
         this.total = arr[0];
         this.data = arr[1].map(v => v.toJSON());

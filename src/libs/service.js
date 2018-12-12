@@ -64,11 +64,18 @@ export const getUsers = (params, pageIndex) => {
 }
 export const getOrders = (params, pageIndex) => {
   let orders = new AV.Query('Order');
-  // orders.startsWith('name', params.name);
-  // orders.startsWith('mobilePhoneNumber', params.phone);
+  if (params.id) {
+    orders.equalTo('objectId', params.id);
+  }
+  orders.startsWith('phoneNumber', params.phone);
   const promise1 = orders.count();
-  const promise2 = orders.limit(10).skip((pageIndex - 1) * 10).find()
+  const promise2 = orders.limit(10).skip((pageIndex - 1) * 10).include(['targetProduct']).find()
   return Promise.all([promise1, promise2])
+}
+export const handleOrder = (id) => {
+  let item = AV.Object.createWithoutData('Order', id)
+  item.set('ifHandle', true)
+  return item.save()
 }
 export const uploadFile = (file) => {
   let name = file.name,
@@ -106,7 +113,7 @@ export const getProductList = (params) => {
   query.select(['isSort', 'isFreeTravel', 'isRecommend', 'isFollowTeam', 'isSpecialPrice', 'place', 'name', 'startDate', 'type', 'endDate', 'onleyId', 'price', 'describe', 'imageArray', 'countNumber'])
   query.addDescending('countNumber')
   query.addDescending('updatedAt')
-  query.contains('type',params.themeSelected)
+  query.contains('type', params.themeSelected)
   return query.find()
 }
 export const deleteProduct = (productId) => {
