@@ -62,6 +62,14 @@ export const getUsers = (params, pageIndex) => {
   const promise2 = users.limit(10).skip((pageIndex - 1) * 10).find()
   return Promise.all([promise1, promise2])
 }
+export const getOrders = (params, pageIndex) => {
+  let orders = new AV.Query('Order');
+  // orders.startsWith('name', params.name);
+  // orders.startsWith('mobilePhoneNumber', params.phone);
+  const promise1 = orders.count();
+  const promise2 = orders.limit(10).skip((pageIndex - 1) * 10).find()
+  return Promise.all([promise1, promise2])
+}
 export const uploadFile = (file) => {
   let name = file.name,
     dataFile = new AV.File(name, file)

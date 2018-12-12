@@ -16,6 +16,14 @@
         :total="total"
         @on-change="pageChange"
       ></Page>
+      <!-- <Page
+        show-total
+        class="tablePage"
+        :current="pageParams.pageIndex"
+        :total="total"
+        @on-change="pageChange"
+        :page-size="1"
+      ></Page> -->
     </div>
   </div>
 </template>

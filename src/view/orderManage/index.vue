@@ -1,153 +1,156 @@
 <template>
   <div>
-    功能暂不开放
     <!-- <div>
-      <Button type="primary" @click="addDestination">添加订单</Button>
-    </div>
+      <Button type="primary" @click="addDestination">添加用户</Button>
+    </div> -->
+    <!-- <Form inline>
+      <FormItem>
+        <Input
+          style="width:300px;"
+          v-model="searchParams.name"
+          placeholder="请输入姓名"
+        ></Input>
+      </FormItem>
+      <FormItem>
+        <Input
+          style="width:300px;"
+          v-model="searchParams.phone"
+          placeholder="请输入手机号"
+        ></Input>
+      </FormItem>
+      <FormItem>
+        <Button @click="handleSearch">查询</Button>
+      </FormItem>
+    </Form> -->
     <div style="margin-top:10px;">
-      <Table :columns="columns" :data="data"></Table>
+      <NewTable
+        ref="table"
+        :request="request"
+        :searchParams="searchParams"
+        :columns="columns"
+      ></NewTable>
     </div>
-    <Modal title="添加订单" v-model="isShowAddModal" @on-ok="confirmaddDestination">
-      <Input v-model="addName" placeholder="输入订单名称"></Input>
-      <Select v-model="relateId" placeholder="关联分类" clearable style="margin-top:10px">
-        <Option v-for="item in themeData" :key="item.objectId" :value="item.objectId">
-          {{item.name}}
-        </Option>
-      </Select>
-    </Modal>
-    <Modal title="编辑订单" v-model="isShowEditModal" @on-ok="confirmeditDestination">
-      <Input v-model="editName" placeholder="输入订单名称"></Input>
-      <Select v-model="relateId" clearable style="margin-top:10px">
-        <Option v-for="item in themeData" :key="item.objectId" :value="item.objectId">
-          {{item.name}}
-        </Option>
-      </Select>
-    </Modal> -->
   </div>
 </template>
 
 <script>
+import moment from 'moment';
+import NewTable from '@/components/newTable';
 import {
-  addDestination,
-  getDestination,
-  deleteDestination,
-  editDestination,
-  getTheme
+  getOrders,
 } from "@/libs/service";
 export default {
+  components: {
+    NewTable
+  },
   data() {
     return {
       relateId: "",
       editRelateId: "",
-      data: [
-        {
-          a: 1
-        }
-      ],
       editName: "",
       themeData: [],
       isShowEditModal: false,
+      request: getOrders,
+      searchParams: {
+        name: '',
+        phone: ''
+      },
       columns: [
         {
-          title: "名称",
-          render: (h, params) => {
-            return <span>{params.row.name}</span>;
-          }
+          title: "姓名",
+          key: 'name'
         },
         {
-          title: "关联分类",
-          render: (h, params) => {
-            let name = "";
-            this.themeData.map(item => {
-              if (item.objectId == params.row.targetType.objectId) {
-                name = item.name;
-              }
-            });
-            return <span>{name}</span>;
-          }
+          title: "手机号",
+          key: 'phoneNumber'
         },
         {
-          title: "操作",
-          key: "action",
-          render: (h, params) => {
-            return (
-              <div>
-                <i-button
-                  type="error"
-                  onClick={() => {
-                    this.deleteDestination(params.row.objectId);
-                  }}
-                >
-                  删除
-                </i-button>
-                <i-button
-                  type="primary"
-                  style="margin-left:10px"
-                  onClick={() => {
-                    this.showEditModal(params);
-                  }}
-                >
-                  编辑
-                </i-button>
-              </div>
-            );
-          }
-        }
+          title: "开始日期",
+          key: 'startDate'
+        },
+        {
+          title: '地点',
+          key: 'startPlace'
+        },
+        {
+          title: '成人数量',
+          key: 'firstCount'
+        },
+        {
+          title: '儿童数量',
+          key: 'secondCount'
+        },
+        // {
+        //   title: "操作",
+        //   key: "action",
+        //   render: (h, params) => {
+        //     return (
+        //       <div>
+        //         <i-button
+        //           type="error"
+        //           onClick={() => {
+        //             this.delete(params.row.objectId);
+        //           }}
+        //         >
+        //           删除
+        //         </i-button>
+        //         <i-button
+        //           type="primary"
+        //           style="margin-left:10px"
+        //           onClick={() => {
+        //             this.showEditModal(params);
+        //           }}
+        //         >
+        //           编辑
+        //         </i-button>
+        //       </div>
+        //     );
+        //   }
+        // }
       ],
       isShowAddModal: false,
       addName: "",
       currentId: null
     };
   },
-  mounted() {
-    this.getThemeData();
-    this.getData();
-  },
   methods: {
-    async getThemeData() {
-      let data = await getTheme();
-      this.themeData = data.map(v => v.toJSON());
-      this.relateId = this.themeData[0].objectId;
+    handleSearch() {
+      this.$refs.table.getTableData();
     },
     showEditModal(params) {
       this.isShowEditModal = true;
       this.currentId = params.row.objectId;
-      this.editRelateId = params.row.targetType.objectId;
       this.editName = params.row.name;
     },
-    addDestination() {
-      this.isShowAddModal = true;
-    },
-    async confirmeditDestination() {
-      let data = await editDestination(
-        this.editName,
-        this.currentId,
-        this.editRelateId
-      );
-      this.$Message.success("修改成功");
-      this.getData();
-    },
-    async confirmaddDestination() {
-      let data = await addDestination(this.addName, this.relateId);
-      this.$Message.success("添加成功");
-      this.addName = "";
-      this.getData();
-    },
-    async getData() {
-      let data = await getDestination();
-      this.data = data.map(v => v.toJSON());
-    },
-    async deleteDestination(objectId) {
-      this.$Modal.confirm({
-        content: "确认删除吗",
-        onOk: () => {
-          deleteDestination(objectId).then(res => {
-            this.getData();
-            this.$Message.success("删除成功");
-          });
-        }
-      });
-    }
+    // addDestination() {
+    //   this.isShowAddModal = true;
+    // },
+    // async sureEdit() {
+    //   let data = await editDestination(
+    //     this.editName,
+    //     this.currentId,
+    //     this.editRelateId
+    //   );
+    //   this.$Message.success("修改成功");
+    //   this.getUsers();
+    // },
+    // async confirmaddDestination() {
+    //   let data = await addDestination(this.addName, this.relateId);
+    //   this.$Message.success("添加成功");
+    //   this.addName = "";
+    //   this.getUsers();
+    // },
+    // async delete(objectId) {
+    //   this.$Modal.confirm({
+    //     content: "确认删除吗",
+    //     onOk: () => {
+    //       deleteUser(objectId).then(res => {
+    //         this.getUsers();
+    //         this.$Message.success("删除成功");
+    //       });
+    //     }
+    //   });
+    // }
   }
 };
 </script>
