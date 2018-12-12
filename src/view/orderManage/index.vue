@@ -65,11 +65,11 @@ export default {
           key: 'phoneNumber'
         },
         {
-          title: "开始日期",
+          title: "出发日期",
           key: 'startDate'
         },
         {
-          title: '地点',
+          title: '出发城市',
           key: 'startPlace'
         },
         {
