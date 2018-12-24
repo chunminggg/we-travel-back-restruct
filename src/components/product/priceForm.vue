@@ -5,6 +5,9 @@
         <FormItem prop="price">
           <Input v-model="params.price" placeholder="请输入成人价格" style="width: 300px"></Input>
         </FormItem>
+         <FormItem prop="commission">
+          <Input v-model="params.commission" placeholder="请输入佣金" style="width: 300px"></Input>
+        </FormItem>
           <FormItem prop="comment">
             <Input v-model="params.comment" placeholder="请输入成人价格备注" style="width: 300px" class="product"></Input>
         </FormItem>
@@ -33,6 +36,7 @@ export default {
         childPrice: "",
         comment: "",
         childComment:'',
+        commission:'',
       },
       isEdit:false,
       currentIdx:0,
@@ -50,6 +54,7 @@ export default {
               this.params.childPrice = params.childPrice
               this.params.comment = params.comment
               this.params.childComment = params.childComment
+              this.params.commission = params.commission
               this.params.id = params.id
               this.params.startDate = params.startDate
               this.currentIdx = idx

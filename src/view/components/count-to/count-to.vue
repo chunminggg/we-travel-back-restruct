@@ -115,7 +115,7 @@ export default {
     priceForm,
     priceView
   },
-   watch:{
+    watch:{
     isShowAddPriceView(newVal){
       if (!newVal) {
         this.$nextTick(()=>{
@@ -265,6 +265,7 @@ export default {
     //价格选择
     priceSelect() {
       this.isShowAddPriceView = true;
+      this.getRichContent()
       this.$nextTick(()=>{
         this.$refs.holePriceView.configPriceView()
       })
@@ -326,6 +327,7 @@ export default {
           this.$Message.error("请上传图片至少一张");
         }
         let data = await createNewProduct(dict);
+        debugger
         this.$Message.success("新建成功");
         this.$nextTick(() => {
           this.$router.go(0);

@@ -13,6 +13,9 @@
         <FormItem prop="price">
           <Input v-model="addParams.price" placeholder="请输入成人价格" style="width: 300px"></Input>
         </FormItem>
+         <FormItem prop="commission">
+          <Input v-model="addParams.commission" placeholder="请输入佣金" style="width: 300px"></Input>
+        </FormItem>
           <FormItem prop="comment">
             <Input v-model="addParams.comment" placeholder="请输入成人价格备注" style="width: 300px" class="product"></Input>
         </FormItem>
@@ -51,6 +54,7 @@ export default {
         childPrice: "",
         comment: "",
         childComment:'',
+        commission:'',
       },
       calendarList: [
         {
@@ -137,6 +141,7 @@ export default {
         comment: this.addParams.comment,
         price: this.addParams.price,
         childComment:this.addParams.childComment,
+        commission:this.addParams.commission,
         id: singleId
       };
       this.tagArray.push(dict);

@@ -37,6 +37,7 @@
       </Input>
       <div class="product">
         <Button type="info" class="product" @click="priceSelect">进入价格视图</Button>
+        <price-list :tagArray="tagArray"></price-list>
         <div class="price-card">
           <!-- <Row :gutter="16">
             <Col span="6" v-for="(item,index) in tagArray" :key="index">
@@ -108,6 +109,7 @@ import moment from "moment";
 import richEditor from "@/components/productEditor/editor";
 import priceForm from "@/components/product/priceForm";
 import priceView from "@/components/calendar/index";
+import priceList from '@/components/calendar/list'
 export default {
   components: {
     imageUpload,
@@ -115,7 +117,8 @@ export default {
     quillEditor,
     richEditor,
     priceForm,
-    priceView
+    priceView,
+    priceList
   },
   watch:{
     isShowAddPriceView(newVal){
