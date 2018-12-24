@@ -36,6 +36,7 @@
     </Input>
     <div class="product">
       <Button type="info" class="product" @click="priceSelect">进入价格视图</Button>
+       <price-list :tagArray="tagArray"></price-list>
       <div class="price-card">
         <!-- <Row :gutter="16">
           <Col span="6" v-for="(item,index) in tagArray" :key="index">
@@ -106,6 +107,7 @@ import richEditor from "@/components/productEditor/editor";
 import moment from "moment";
 import priceForm from '@/components/product/priceForm'
 import priceView from "@/components/calendar/index";
+import priceList from '@/components/calendar/list'
 export default {
   components: {
     imageUpload,
@@ -113,7 +115,8 @@ export default {
     quillEditor,
     richEditor,
     priceForm,
-    priceView
+    priceView,
+    priceList
   },
     watch:{
     isShowAddPriceView(newVal){
@@ -266,6 +269,7 @@ export default {
     priceSelect() {
       this.isShowAddPriceView = true;
       this.getRichContent()
+      this.formatDateArray()
       this.$nextTick(()=>{
         this.$refs.holePriceView.configPriceView()
       })
@@ -287,9 +291,15 @@ export default {
         item.content = editorContent;
       });
     },
+    formatDateArray(){
+      this.tagArray.map(item=>{
+        item.startDate = moment(item.startDate).format("YYYY-MM-DD")
+      })
+    },
     getNowData() {
       var _self = this;
       this.getRichContent();
+      this.formatDateArray()
       var dict = {
         startDate: _self.productStartDate,
         // endDate: _self.productEndDate,

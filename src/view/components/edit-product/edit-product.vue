@@ -268,6 +268,7 @@ export default {
     //价格选择
     priceSelect() {
       this.isShowAddPriceView = true;
+      this.formatDateArray()
       this.$nextTick(()=>{
         this.$refs.holePriceView.configPriceView()
       })
@@ -281,9 +282,15 @@ export default {
     getFileArray(data) {
       this.fileArray = data;
     },
+     formatDateArray(){
+      this.tagArray.map(item=>{
+        item.startDate = moment(item.startDate).format("YYYY-MM-DD")
+      })
+    },
     getNowData() {
       var _self = this;
       this.getRichContent();
+      this.formatDateArray()
       var dict = {
         startDate: _self.productStartDate,
         // endDate: _self.productEndDate,
