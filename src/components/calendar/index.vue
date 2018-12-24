@@ -7,45 +7,24 @@
       <Button @click="nextMonth">下个月</Button>
       <span class="nowDate">{{nowDate}}</span>
     </div>
-    <calendar
-      ref="tuiCalendar"
-      style="height: 800px;"
-      :useCreationPopup="isShowPopup"
-      :useDetailPopup="isShowPopup"
-      view="month"
-      @beforeCreateSchedule="onBeforeCreateSchedule"
-      @clickSchedule="onClickSchedule"
-      :schedules="scheduleList"
-      :scheduleView="scheduleView"
-    />
-    <Modal
-      v-model="priceModal"
-      title="价格添加"
-      @on-ok="priceAdd"
-    >
-      <Input
-        v-model="addParams.price"
-        placeholder="请输入成人价格"
-        style="width: 300px"
-      ></Input>
-      <Input
-        v-model="addParams.childPrice"
-        placeholder="请输入儿童价格"
-        style="width: 300px"
-        class="product"
-      ></Input>
-      <Input
-        v-model="addParams.comment"
-        placeholder="请输入备注"
-        style="width: 300px"
-        class="product"
-      ></Input>
-      <!-- <DatePicker v-model="singleDate" placeholder="选择日期" style="width: 300px" type="daterange" class="product"></DatePicker> -->
+    <calendar ref="tuiCalendar" style="height: 800px;" :useCreationPopup="isShowPopup" :useDetailPopup="isShowPopup" view="month" @beforeCreateSchedule="onBeforeCreateSchedule" @clickSchedule="onClickSchedule" :schedules="scheduleList" :scheduleView="scheduleView" />
+    <Modal v-model="priceModal" title="价格添加" @on-ok="priceAdd">
+      <Form ref="formInline" :model="addParams"  inline>
+        <FormItem prop="price">
+          <Input v-model="addParams.price" placeholder="请输入成人价格" style="width: 300px"></Input>
+        </FormItem>
+          <FormItem prop="comment">
+            <Input v-model="addParams.comment" placeholder="请输入成人价格备注" style="width: 300px" class="product"></Input>
+        </FormItem>
+          <FormItem prop="childPrice">
+      <Input v-model="addParams.childPrice" placeholder="请输入儿童价格" style="width: 300px" class="product"></Input>
+        </FormItem>
+          <FormItem prop="childComment">
+          <Input v-model="addParams.childComment" placeholder="请输入儿童价格备注" style="width: 300px"></Input>
+        </FormItem>
+      </Form>
     </Modal>
-    <price-form
-      ref="priceForm"
-      @priceEdit="priceEdit"
-    ></price-form>
+    <price-form ref="priceForm" @priceEdit="priceEdit"></price-form>
   </div>
 
 </template>
@@ -70,7 +49,8 @@ export default {
       addParams: {
         price: "",
         childPrice: "",
-        comment: ""
+        comment: "",
+        childComment:'',
       },
       calendarList: [
         {
@@ -95,7 +75,7 @@ export default {
     configPriceView() {
       if (this.tagArray.length) {
         this.tagArray.map(item => {
-          let nowDate = moment(item.startDate)
+          let nowDate = moment(item.startDate);
           let info = {
             id: item.id,
             calendarId: "1",
@@ -150,10 +130,13 @@ export default {
         title: this.addParams.price
       };
       let dict = {
-        startDate: moment(this.currentDateItem.start.toDate()).format("YYYY-MM-DD"),
+        startDate: moment(this.currentDateItem.start.toDate()).format(
+          "YYYY-MM-DD"
+        ),
         childPrice: this.addParams.childPrice,
         comment: this.addParams.comment,
         price: this.addParams.price,
+        childComment:this.addParams.childComment,
         id: singleId
       };
       this.tagArray.push(dict);

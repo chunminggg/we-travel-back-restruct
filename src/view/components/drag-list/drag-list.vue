@@ -70,7 +70,7 @@ export default {
                   type="error"
                   size="small"
                   style="margin-left:10px;"
-                  onClcik={() => {
+                  onClick={() => {
                     this.deleteItem(params);
                   }}
                 >
