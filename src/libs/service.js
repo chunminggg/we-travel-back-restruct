@@ -55,12 +55,17 @@ export const deleteUser = (id) => {
   return item.destroy()
 }
 export const getUsers = (params, pageIndex) => {
-  let users = new AV.Query('_User');
+  let users = new AV.Query('UserCopy');
   users.startsWith('name', params.name);
   users.startsWith('mobilePhoneNumber', params.phone);
   const promise1 = users.count();
   const promise2 = users.limit(10).skip((pageIndex - 1) * 10).find()
   return Promise.all([promise1, promise2])
+}
+export const changeUserType = (id, flag) => {
+  let item = AV.Object.createWithoutData('UserCopy', id)
+  item.set('ifSeller', flag)
+  return item.save()
 }
 export const getOrders = (params, pageIndex) => {
   let orders = new AV.Query('Order');

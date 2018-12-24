@@ -62,7 +62,8 @@ import moment from 'moment';
 import NewTable from '@/components/newTable';
 import {
   getUsers,
-  deleteUser
+  deleteUser,
+  changeUserType
 } from "@/libs/service";
 export default {
   components: {
@@ -96,7 +97,33 @@ export default {
           render: (h, params) => {
             return <span>{moment(params.row.createdAt).format('YYYY-MM-DD HH:ss')}</span>
           }
-        },
+        }, {
+          title: "账户类型",
+          key: "action",
+          render: (h, params) => {
+            const ifSeller = params.row.ifSeller;
+            return (
+              <button-group>
+                <i-button
+                  onClick={() => {
+                    changeUserType(params.row.objectId, false).then(d => this.handleSearch());
+                  }}
+                  type={!ifSeller ? "primary" : null}
+                >
+                  普通用户
+                    </i-button>
+                <i-button
+                  onClick={() => {
+                    changeUserType(params.row.objectId, true).then(d => this.handleSearch());
+                  }}
+                  type={ifSeller ? "primary" : null}
+                >
+                  商户
+                    </i-button>
+              </button-group>
+            );
+          }
+        }
         // {
         //   title: "操作",
         //   key: "action",
