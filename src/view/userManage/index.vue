@@ -88,6 +88,10 @@ export default {
           key: 'name'
         },
         {
+          title: "商户名称",
+          key: 'sellerName'
+        },
+        {
           title: "手机号",
           key: 'mobilePhoneNumber'
         },
