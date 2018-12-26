@@ -7,27 +7,70 @@
       <Button @click="nextMonth">下个月</Button>
       <span class="nowDate">{{nowDate}}</span>
     </div>
-    <calendar ref="tuiCalendar" style="height: 800px;" :useCreationPopup="isShowPopup" :useDetailPopup="isShowPopup" view="month" @beforeCreateSchedule="onBeforeCreateSchedule" @clickSchedule="onClickSchedule" :schedules="scheduleList" :scheduleView="scheduleView" />
-    <Modal v-model="priceModal" title="价格添加" @on-ok="priceAdd">
-      <Form ref="formInline" :model="addParams"  inline>
+    <calendar
+      ref="tuiCalendar"
+      style="height: 800px;"
+      :useCreationPopup="isShowPopup"
+      :useDetailPopup="isShowPopup"
+      view="month"
+      @beforeCreateSchedule="onBeforeCreateSchedule"
+      @clickSchedule="onClickSchedule"
+      :schedules="scheduleList"
+      :scheduleView="scheduleView"
+    />
+    <Modal
+      v-model="priceModal"
+      title="价格添加"
+      @on-ok="priceAdd"
+    >
+      <Form
+        ref="formInline"
+        :model="addParams"
+        inline
+      >
         <FormItem prop="price">
-          <Input v-model="addParams.price" placeholder="请输入成人价格" style="width: 300px"></Input>
+          <Input
+            v-model="addParams.price"
+            placeholder="请输入成人价格"
+            style="width: 300px"
+          ></Input>
         </FormItem>
-         <FormItem prop="commission">
-          <Input v-model="addParams.commission" placeholder="请输入佣金" style="width: 300px"></Input>
+        <FormItem prop="commission">
+          <Input
+            v-model="addParams.commission"
+            placeholder="请输入佣金"
+            style="width: 300px"
+          ></Input>
         </FormItem>
-          <FormItem prop="comment">
-            <Input v-model="addParams.comment" placeholder="请输入成人价格备注" style="width: 300px" class="product"></Input>
+        <FormItem prop="comment">
+          <Input
+            v-model="addParams.comment"
+            placeholder="请输入成人价格备注"
+            style="width: 300px"
+            class="product"
+          ></Input>
         </FormItem>
-          <FormItem prop="childPrice">
-      <Input v-model="addParams.childPrice" placeholder="请输入儿童价格" style="width: 300px" class="product"></Input>
+        <FormItem prop="childPrice">
+          <Input
+            v-model="addParams.childPrice"
+            placeholder="请输入儿童价格"
+            style="width: 300px"
+            class="product"
+          ></Input>
         </FormItem>
-          <FormItem prop="childComment">
-          <Input v-model="addParams.childComment" placeholder="请输入儿童价格备注" style="width: 300px"></Input>
+        <FormItem prop="childComment">
+          <Input
+            v-model="addParams.childComment"
+            placeholder="请输入儿童价格备注"
+            style="width: 300px"
+          ></Input>
         </FormItem>
       </Form>
     </Modal>
-    <price-form ref="priceForm" @priceEdit="priceEdit"></price-form>
+    <price-form
+      ref="priceForm"
+      @priceEdit="priceEdit"
+    ></price-form>
   </div>
 
 </template>
@@ -53,8 +96,8 @@ export default {
         price: "",
         childPrice: "",
         comment: "",
-        childComment:'',
-        commission:'',
+        childComment: "",
+        commission: ""
       },
       calendarList: [
         {
@@ -124,42 +167,50 @@ export default {
     },
     // 价格添加
     priceAdd() {
-      let singleId = uuidv1();
-      let info = {
-        id: singleId,
-        calendarId: "1",
-        category: "time",
-        dueDateClass: "",
-        start: this.currentDateItem.start,
-        title: this.addParams.price
-      };
-     let dateArray = this.getDates(this.currentDateItem.start._date,this.currentDateItem.end._date)
-     
-      let dict = {
-        startDate: moment(this.currentDateItem.start.toDate()).format(
-          "YYYY-MM-DD"
-        ),
-        childPrice: this.addParams.childPrice,
-        comment: this.addParams.comment,
-        price: this.addParams.price,
-        childComment:this.addParams.childComment,
-        commission:this.addParams.commission,
-        id: singleId
-      };
-      this.tagArray.push(dict);
-      this.scheduleList.push(info);
+      let dateArray = this.getDates(
+        this.currentDateItem.start.toDate(),
+        this.currentDateItem.end.toDate()
+      );
+      if (dateArray.length) {
+        dateArray.map(item => {
+          let singleId = uuidv1();
+          let info = {
+            id: singleId,
+            calendarId: "1",
+            category: "time",
+            dueDateClass: "",
+            // start: this.currentDateItem.start,
+            start: moment(item).toDate(),
+            title: this.addParams.price
+          };
+          let dict = {
+            // startDate: moment(this.currentDateItem.start.toDate()).format(
+            //   "YYYY-MM-DD"
+            // ),
+            startDate:item,
+            childPrice: this.addParams.childPrice,
+            comment: this.addParams.comment,
+            price: this.addParams.price,
+            childComment: this.addParams.childComment,
+            commission: this.addParams.commission,
+            id: singleId
+          };
+          this.tagArray.push(dict);
+          this.scheduleList.push(info);
+        });
+      }
     },
     // 获取时间范围
     getDates(startDate, stopDate) {
-    let dateArray = [];
-    let currentDate = moment(startDate);
-    stopDate = moment(stopDate);
-    while (currentDate <= stopDate) {
-        dateArray.push( moment(currentDate).format('YYYY-MM-DD') )
-        currentDate = moment(currentDate).add(1, 'days');
-    }
-    return dateArray;
-},
+      let dateArray = [];
+      let currentDate = moment(startDate);
+      stopDate = moment(stopDate);
+      while (currentDate <= stopDate) {
+        dateArray.push(moment(currentDate).format("YYYY-MM-DD"));
+        currentDate = moment(currentDate).add(1, "days");
+      }
+      return dateArray;
+    },
     onBeforeCreateSchedule(e) {
       this.currentDateItem = e;
       e.guide.clearGuideElement();
