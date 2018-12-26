@@ -65,7 +65,8 @@ export default {
           this.tagArray.splice(index, 1);
         }
       });
-    }
+    },
+  
   }
 };
 </script>
