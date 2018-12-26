@@ -133,6 +133,8 @@ export default {
         start: this.currentDateItem.start,
         title: this.addParams.price
       };
+     let dateArray = this.getDates(this.currentDateItem.start._date,this.currentDateItem.end._date)
+     
       let dict = {
         startDate: moment(this.currentDateItem.start.toDate()).format(
           "YYYY-MM-DD"
@@ -147,6 +149,17 @@ export default {
       this.tagArray.push(dict);
       this.scheduleList.push(info);
     },
+    // 获取时间范围
+    getDates(startDate, stopDate) {
+    let dateArray = [];
+    let currentDate = moment(startDate);
+    stopDate = moment(stopDate);
+    while (currentDate <= stopDate) {
+        dateArray.push( moment(currentDate).format('YYYY-MM-DD') )
+        currentDate = moment(currentDate).add(1, 'days');
+    }
+    return dateArray;
+},
     onBeforeCreateSchedule(e) {
       this.currentDateItem = e;
       e.guide.clearGuideElement();
