@@ -92,6 +92,13 @@ export default {
           key: 'sellerName'
         },
         {
+          title: "二维码",
+          key: 'userImageUrl',
+          render(h, params){
+            return <a target="_blank" href={params.row.userImageUrl}>{params.row.userImageUrl}</a>
+          }
+        },
+        {
           title: "手机号",
           key: 'mobilePhoneNumber'
         },
